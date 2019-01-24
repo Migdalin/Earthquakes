@@ -19,7 +19,7 @@ class ConvLearner:
         self.learning_rate = 1e-5
         self.total_step_count = 0
         self.model = self.BuildModel()
-        self.saver = tf.train.Saver()
+        self.saver = tf.train.Saver(keep_checkpoint_every_n_hours=1.0)
         self.InitStatsWriter()
         self.session.run(tf.global_variables_initializer())
 
