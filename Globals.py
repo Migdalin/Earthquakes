@@ -1,0 +1,7 @@
+
+
+SAMPLE_LENGTH = 1.5e5
+RESHAPED_DIMS = (150, 1000, 1)
+SAVED_WEIGHTS = "./kenton"
+
+
