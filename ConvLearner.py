@@ -85,17 +85,15 @@ class ConvLearner:
                          namePrefix='c3'))
 
         flattened = tf.layers.Flatten()(conv_3)
-        flat_normal = tf.math.l2_normalize(flattened, axis=1)
         fc_1 = tf.layers.Dense(units = 256, 
                                activation='relu',
                                kernel_initializer=kernelInit,
-                               name='fc_1')(flat_normal)
+                               name='fc_1')(flattened)
         
-        fc1_normal = tf.math.l2_normalize(fc_1, axis=1)
         output = tf.layers.Dense(units=1,
                                  activation='relu',
                                  kernel_initializer=kernelInit,
-                                 name='output')(fc1_normal)
+                                 name='output')(fc_1)
 
         labels = tf.placeholder(dtype=tf.float32, 
                                shape=(None,1),

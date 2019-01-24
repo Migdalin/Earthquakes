@@ -16,11 +16,6 @@ class TrainingDataMgr:
         if(self._skip() == None):
             return None
         
-        nextRow = self._getNextRow()
-        if (nextRow == None):
-            return None
-        
-        self.data.pop(0)
         return self.data
 
     def _skip(self):
