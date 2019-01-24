@@ -1,6 +1,7 @@
 
 
 import csv
+import random
 
 class TrainingDataMgr:
     def __init__(self, sampleLength, iDataPath):
@@ -12,12 +13,23 @@ class TrainingDataMgr:
         self._fillBuffer()
         
     def Next(self):
+        if(self._skip() == None):
+            return None
+        
         nextRow = self._getNextRow()
         if (nextRow == None):
             return None
         
         self.data.pop(0)
         return self.data
+
+    def _skip(self):
+        numToSkip = random.randint(100, 1000)
+        for _ in range(numToSkip):
+            if(self._getNextRow() == None):
+                return None
+            self.data.pop(0)
+        return numToSkip
             
     def _fillBuffer(self):
         while(len(self.data) < self.sampleLength):
