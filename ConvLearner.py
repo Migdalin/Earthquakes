@@ -19,7 +19,7 @@ class ConvLearner:
         self.learning_rate = 1e-5
         self.total_step_count = 0
         self.model = self.BuildModel()
-        self.saver = tf.train.Saver(keep_checkpoint_every_n_hours=1.0)
+        self.saver = tf.train.Saver()
         self.InitStatsWriter()
         self.session.run(tf.global_variables_initializer())
 
@@ -27,7 +27,7 @@ class ConvLearner:
         self.statsWriter = tf.summary.FileWriter(f"tensorboard/{int(time())}")
         tf.summary.scalar("Loss", self.model.loss)
         self.writeStatsOp = tf.summary.merge_all()
-        self.SaveWeightsFilename = "ConvLearnerWeights.h5"
+        self.SaveWeightsFilename = "ConvLearnerCheckpoint"
 
     def WriteStats(self, feedDict):
         summary = self.session.run(self.writeStatsOp, feed_dict=feedDict)
@@ -118,8 +118,8 @@ class ConvLearner:
         if((self.total_step_count % 10) == 0):
             self.WriteStats(feed_dict)
 
-    def Save(self, destPath):
-        self.saver.save(self.session, destPath, global_step=self.total_step_count)
+    def Save(self):
+        self.saver.save(self.session, self.SaveWeightsFilename, global_step=self.total_step_count)
 
 
         
