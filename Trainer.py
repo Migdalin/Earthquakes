@@ -9,7 +9,6 @@ from Globals import SAMPLE_LENGTH
 class Trainer:
     def __init__(self):
         self.mgr = TrainingDataMgr(SAMPLE_LENGTH, "train.csv")
-        self.batchSize = 32
         self.eof = False
         self.learner = ConvLearner()
         
@@ -19,17 +18,21 @@ class Trainer:
             self.learner.Save()
             
     def RunOneEpoch(self):
+        grossCount = 0
         while(self.eof == False):
             for i in tqdm(range(100)):
                 self.RunOneBatch()
                 if(self.eof==True):
                     break
+            grossCount += 1
+            if((grossCount % 10) == 0):
+                self.learner.Save()
     
         self.eof = False
         self.mgr.Reset()
         
     def RunOneBatch(self):        
-        batchList, labels = self.mgr.NextBatch(self.batchSize)
+        batchList, labels = self.mgr.NextBatch()
         if(batchList == None):
             self.eof = True
             return

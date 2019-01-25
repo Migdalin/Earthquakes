@@ -13,7 +13,7 @@ ConvArgs = namedtuple('ConvArgs',
                       'layerInput, numFilters, filterSize, stride, init, namePrefix')
 ConvArgs.__new__.__defaults__ = (None,) * len(ConvArgs._fields)
 
-class ConvLearner:
+class TFConvLearner:
     def __init__(self):
         self.session = tf.Session()
         self.learning_rate = 1e-5
@@ -99,7 +99,7 @@ class ConvLearner:
                                shape=(None,1),
                                name="labels")
 
-        loss = tf.reduce_mean(tf.multiply(tf.abs(tf.subtract(labels, output)), 4e3))
+        loss = tf.reduce_sum(tf.multiply(tf.abs(tf.subtract(labels, output)), 4e3))
         optimizer = tf.train.AdamOptimizer(
                     learning_rate=self.learning_rate).minimize(loss)
 

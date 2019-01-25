@@ -3,7 +3,7 @@
 import csv
 import random
 import numpy as np
-from Globals import RESHAPED_DIMS
+from Globals import RESHAPED_DIMS, BATCH_SIZE
 
 class TrainingDataMgr:
     def __init__(self, sampleLength, iDataPath):
@@ -15,23 +15,23 @@ class TrainingDataMgr:
         self.csvReader = csv.reader(self.inputFile)
         self._fillBuffer()
         
-    def NextBatch(self, batchSize):
-        batchList, labels = self._getBatchInternal(batchSize)
+    def NextBatch(self):
+        batchList, labels = self._getBatchInternal()
         
         while(self.discontinuity == True and batchList != None):
             print("Encountered label discontinuity.  Resetting buffer.")
             self._refillBuffer()
-            batchList, labels = self._getBatchInternal(batchSize)
+            batchList, labels = self._getBatchInternal()
         
         return batchList, labels
 
-    def _getBatchInternal(self, batchSize):
+    def _getBatchInternal(self):
         if(self._skip() == None):
             return None, None
 
         batchList = []
         labels = []
-        for _ in range(batchSize):
+        for _ in range(BATCH_SIZE):
             if(self._getNextRow() == None):
                 return None, None
             
