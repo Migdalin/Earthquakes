@@ -6,7 +6,7 @@ import tensorflow as tf
 from Globals import RESHAPED_DIMS
 
 ModelInfo = namedtuple('ModelInfo', 
-                       'data, labels, loss, optimizer')
+                       'data, labels, loss, optimizer, output')
 ModelInfo.__new__.__defaults__ = (None,) * len(ModelInfo._fields)
 
 ConvArgs = namedtuple('ConvArgs',
@@ -106,7 +106,8 @@ class ConvLearner:
         result = ModelInfo(data=data,
                            labels=labels,
                            loss=loss,
-                           optimizer=optimizer)
+                           optimizer=optimizer,
+                           output=output)
         return result        
 
     def Fit(self, iBatch, iLabels):
@@ -118,8 +119,15 @@ class ConvLearner:
         if((self.total_step_count % 10) == 0):
             self.WriteStats(feed_dict)
 
+    def Predict(self, iData):
+        feedDict={self.model.data: iData}
+        result = self.session.run(self.model.output, feed_dict=feedDict)
+        return result.flatten()
+
     def Save(self):
         self.saver.save(self.session, self.SaveWeightsFilename, global_step=self.total_step_count)
 
-
+    def Load(self):
+        if(tf.train.checkpoint_exists(self.SaveWeightsFilename)):
+            self.saver.restore(self.session, self.SaveWeightsFilename)
         

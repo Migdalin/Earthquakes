@@ -65,8 +65,8 @@ class TrainingDataMgr:
     def _getNextRow(self):
         try:
             nextRow = self.csvReader.__next__()
-            self.data.append(nextRow[0])
-            nextLabel = nextRow[1]
+            self.data.append(float(nextRow[0]))
+            nextLabel = float(nextRow[1])
             if(self.currentLabel != None and self.currentLabel < nextLabel):
                 self.discontinuity = True
                 
