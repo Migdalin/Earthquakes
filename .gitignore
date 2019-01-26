@@ -3,3 +3,5 @@
 *.txt
 events.out.tfevents.*
 *.csv
+checkpoint
+ConvLearnerCheckpoint.ckpt*
