@@ -27,7 +27,7 @@ class ConvLearner:
         self.statsWriter = tf.summary.FileWriter(f"tensorboard/{int(time())}")
         tf.summary.scalar("Loss", self.model.loss)
         self.writeStatsOp = tf.summary.merge_all()
-        self.SaveWeightsFilename = "ConvLearnerCheckpoint"
+        self.SaveWeightsFilename = "./checkpoint/ConvLearnerCheckpoint.ckpt"
 
     def WriteStats(self, feedDict):
         summary = self.session.run(self.writeStatsOp, feed_dict=feedDict)
@@ -125,7 +125,7 @@ class ConvLearner:
         return result.flatten()
 
     def Save(self):
-        self.saver.save(self.session, self.SaveWeightsFilename, global_step=self.total_step_count)
+        self.saver.save(self.session, self.SaveWeightsFilename)
 
     def Load(self):
         if(tf.train.checkpoint_exists(self.SaveWeightsFilename)):

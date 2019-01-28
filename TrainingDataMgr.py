@@ -55,6 +55,7 @@ class TrainingDataMgr:
         return numToSkip
             
     def _fillBuffer(self):
+        self.csvReader.__next__()  # skip header
         while(len(self.data) < self.sampleLength):
             nextRow = self._getNextRow()
             if(nextRow == None):

@@ -15,7 +15,7 @@ class Trainer:
     def Train(self, numEpochs):
         for i in range(numEpochs):
             self.RunOneEpoch()
-            self.learner.Save()
+            
             
     def RunOneEpoch(self):
         grossCount = 0
@@ -42,7 +42,7 @@ class Trainer:
         
         
 trainer = Trainer()
-trainer.Train(3)
+trainer.Train(2)
 
 
         

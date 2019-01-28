@@ -41,7 +41,7 @@ header = ["seg_id", 	"time_to_failure"]
 
 if(Validate == True):
     tester = Tester("validate", "validation_results.csv")
-    header.append("prediction")
+    header.append("yTrue")
     header.append("delta")
 else:
     tester = Tester("test", "test_submission.csv")

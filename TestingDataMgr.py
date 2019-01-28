@@ -21,12 +21,8 @@ class TestingDataMgr:
             while(True):
                 try:
                     curLine = reader.__next__()
-                    if(curLine==None or len(curLine) == 0):
-                        print("wtf")
-                        break
-                    else:
-                        data.append(float(curLine[0]))
-                        prevLine = curLine
+                    data.append(float(curLine[0]))
+                    prevLine = curLine
                 except StopIteration:
                     break
             
