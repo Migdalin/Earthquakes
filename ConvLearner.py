@@ -91,7 +91,6 @@ class ConvLearner:
                                name='fc_1')(flattened)
         
         output = tf.layers.Dense(units=1,
-                                 activation='relu',
                                  kernel_initializer=kernelInit,
                                  name='output')(fc_1)
 

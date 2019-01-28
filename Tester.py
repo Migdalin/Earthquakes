@@ -28,8 +28,8 @@ class Tester:
                 
     def TestSingleFile(self, fileName):
         data, label = self.mgr.GetData(fileName)
-        prediction = self.learner.Predict(data)[0]
-        result = [os.path.basename(fileName), prediction]
+        prediction = self.learner.Predict(data)
+        result = [os.path.basename(fileName), prediction[0]]
         if(label != None):
             result.append(label)
             result.append(abs(label - prediction))
