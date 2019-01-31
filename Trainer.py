@@ -2,6 +2,7 @@
 
 import numpy as np
 from tqdm import tqdm
+#from RnnLearner import RnnLearner
 from ConvLearner import ConvLearner
 from TrainingDataMgr import TrainingDataMgr
 from Globals import SAMPLE_LENGTH
@@ -27,6 +28,9 @@ class Trainer:
             grossCount += 1
             if((grossCount % 10) == 0):
                 self.learner.Save()
+                
+                # debugging
+                return
     
         self.eof = False
         self.mgr.Reset()
