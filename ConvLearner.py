@@ -3,7 +3,7 @@ from collections import namedtuple
 from time import time
 import tensorflow as tf
 
-from Globals import RESHAPED_DIMS
+from Globals import RESHAPED_DIMS, SAMPLE_LENGTH
 
 ModelInfo = namedtuple('ModelInfo', 
                        'data, labels, loss, optimizer, output')
@@ -15,6 +15,7 @@ ConvArgs.__new__.__defaults__ = (None,) * len(ConvArgs._fields)
 
 class ConvLearner:
     def __init__(self):
+        tf.reset_default_graph()
         self.session = tf.Session()
         self.learning_rate = 1e-5
         self.total_step_count = 0
@@ -54,42 +55,48 @@ class ConvLearner:
         return activated
 
     def BuildModel(self):
-        kernelInit = tf.contrib.layers.xavier_initializer()
+        kernelInit = tf.orthogonal_initializer()
     
         data = tf.placeholder(dtype=tf.float32, 
                               shape=(None,) + RESHAPED_DIMS, 
                               name='data')
+
+        numCols = 80
+        numRows = int(SAMPLE_LENGTH / numCols)
+        data2D = tf.reshape(data, (tf.shape(data)[0], numRows, numCols, 1))
     
-        conv_1 = self.BuildConv2D(
-                ConvArgs(layerInput = data, 
-                         numFilters = 32,
+        kernelInit = tf.orthogonal_initializer()
+        conv1 = self.BuildConv2D(
+                ConvArgs(layerInput = data2D, 
+                         numFilters = 8,
                          filterSize = 8,
-                         stride = 2,
+                         stride = 4,
                          init = kernelInit,
                          namePrefix='c1'))
-
-        conv_2 = self.BuildConv2D(
-                ConvArgs(layerInput = conv_1, 
-                         numFilters = 64,
-                         filterSize = 4,
-                         stride = 2,
+    
+        conv2 = self.BuildConv2D(
+                ConvArgs(layerInput = conv1, 
+                         numFilters = 16,
+                         filterSize = 8,
+                         stride = 4,
                          init = kernelInit,
                          namePrefix='c2'))
-
-        conv_3 = self.BuildConv2D(
-                ConvArgs(layerInput = conv_2, 
-                         numFilters = 128,
-                         filterSize = 4,
-                         stride = 2,
+    
+        conv3 = self.BuildConv2D(
+                ConvArgs(layerInput = conv2, 
+                         numFilters = 16,
+                         filterSize = 3,
+                         stride = 3,
                          init = kernelInit,
                          namePrefix='c3'))
+    
+        c3_flattened = tf.layers.Flatten()(conv3)
 
-        flattened = tf.layers.Flatten()(conv_3)
-        fc_1 = tf.layers.Dense(units = 256, 
-                               activation='relu',
+        fc_1 = tf.layers.Dense(units = 64, 
+                               activation=tf.nn.leaky_relu,
                                kernel_initializer=kernelInit,
-                               name='fc_1')(flattened)
-        
+                               name='fc_1')(c3_flattened)
+
         output = tf.layers.Dense(units=1,
                                  kernel_initializer=kernelInit,
                                  name='output')(fc_1)
@@ -98,8 +105,8 @@ class ConvLearner:
                                shape=(None,1),
                                name="labels")
 
-        loss = tf.reduce_mean(tf.multiply(tf.abs(tf.subtract(labels, output)), 4e3))
-        optimizer = tf.train.AdamOptimizer(
+        loss = tf.reduce_mean(tf.multiply(tf.abs(tf.subtract(labels, output)), 4e2))
+        optimizer = tf.train.RMSPropOptimizer(
                     learning_rate=self.learning_rate).minimize(loss)
 
         result = ModelInfo(data=data,
